@@ -5,8 +5,9 @@
 
 from scrapy import signals
 
+
 # useful for handling different item types with a single interface
-from itemadapter import is_item, ItemAdapter
+# from itemadapter import is_item, ItemAdapter
 
 
 class FlightSpiderMiddleware:
@@ -101,3 +102,19 @@ class FlightDownloaderMiddleware:
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+
+
+from fake_useragent import UserAgent
+
+
+class RandomUserAgentMiddleware(object):
+    def __init__(self, crawler):
+        super().__init__()
+        self.ua = UserAgent()
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(crawler)
+
+    def process_request(self, request, spider):
+        request.headers['User-Agent'] = self.ua.random

@@ -5,9 +5,24 @@
 
 
 # useful for handling different item types with a single interface
-from itemadapter import ItemAdapter
+# from itemadapter import ItemAdapter
 
 
 class FlightPipeline:
     def process_item(self, item, spider):
         return item
+
+
+import json
+
+
+class CtripPipeline(object):
+    def __init__(self, path):
+        self.info = json.loads(path)
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(path=crawler.settings.get('REQUIRED_INFO'))
+
+    def open_spider(self, spider):
+        spider.get_info(self.info)
