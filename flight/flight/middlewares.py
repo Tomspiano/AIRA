@@ -118,3 +118,28 @@ class RandomUserAgentMiddleware(object):
 
     def process_request(self, request, spider):
         request.headers['User-Agent'] = self.ua.random
+        # spider.logger.info(f'Using UA {request.headers["User-Agent"]}')
+
+import requests
+
+
+class RandomProxyMiddleware(object):
+    def __init__(self, crawler):
+        super().__init__()
+        self.api = 'http://127.0.0.1:5000/'
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(crawler)
+
+    def get_proxy(self):
+        return requests.get(f'{self.api}get').json()
+
+    def delete_proxy(self, proxy):
+        requests.get(f'{self.api}delete/?proxy={proxy}')
+
+    def process_request(self, request, spider):
+        proxy = f'http://{self.get_proxy().get("proxy")}'
+        request.meta['proxy'] = proxy
+        # spider.logger.info(f'Using proxy {proxy}')
+        # self.delete_proxy(proxy)

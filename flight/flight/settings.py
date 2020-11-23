@@ -16,7 +16,7 @@ NEWSPIDER_MODULE = 'flight.spiders'
 # USER_AGENT = 'flight (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 # CONCURRENT_REQUESTS = 32
@@ -24,13 +24,14 @@ ROBOTSTXT_OBEY = True
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-# DOWNLOAD_DELAY = 3
+DOWNLOAD_DELAY = 3
+# DOWNLOAD_DELAY = 1
 # The download delay setting will honor only one of:
 # CONCURRENT_REQUESTS_PER_DOMAIN = 16
 # CONCURRENT_REQUESTS_PER_IP = 16
 
 # Disable cookies (enabled by default)
-# COOKIES_ENABLED = False
+COOKIES_ENABLED = False
 
 # Disable Telnet Console (enabled by default)
 # TELNETCONSOLE_ENABLED = False
@@ -52,6 +53,7 @@ ROBOTSTXT_OBEY = True
 DOWNLOADER_MIDDLEWARES = {
     # 'flight.middlewares.FlightDownloaderMiddleware': 543,
     'flight.middlewares.RandomUserAgentMiddleware'              : 543,
+    'flight.middlewares.RandomProxyMiddleware'                  : 544,
     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
 }
 
@@ -63,10 +65,10 @@ DOWNLOADER_MIDDLEWARES = {
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-ITEM_PIPELINES = {
-    # 'flight.pipelines.FlightPipeline': 300,
-    'flight.pipelines.CtripPipeline': 300,
-}
+# ITEM_PIPELINES = {
+#     # 'flight.pipelines.FlightPipeline': 300,
+#     'flight.pipelines.CtripPipeline': 300,
+# }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
@@ -95,3 +97,6 @@ LOG_LEVEL = 'INFO'
 
 # Add custom project commands
 COMMANDS_MODULE = 'flight.commands'
+
+# Configure retry middleware
+# RETRY_TIMES = 3
