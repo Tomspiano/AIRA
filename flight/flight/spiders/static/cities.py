@@ -14,11 +14,12 @@ from modules import dictionary as dic
 
 class CitiesSpider2(scrapy.Spider):
     name = 'cities2'
+    custom_settings = {'LOG_FILE': 'cities_log.txt'}
     start_urls = ['https://flights.ctrip.com/schedule/']
 
     def parse(self, response, **kwargs):
         i = 0
-        with open('../../../../collection/cities.txt', 'w', encoding='utf-8') as f:
+        with open('../data/cityNameAbbr2.txt', 'w', encoding='utf-8') as f:
             for flight in response.css('div.m a'):
                 cityName = flight.css('::text').re(r'(\w+)航班')[0]
                 if cityName not in dic.city:
