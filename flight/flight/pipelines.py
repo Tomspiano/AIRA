@@ -16,7 +16,7 @@ class FlightPipeline:
 import json
 
 
-class CtripPipeline(object):
+class CtripPipeline:
     def __init__(self, path):
         self.info = json.loads(path)
 

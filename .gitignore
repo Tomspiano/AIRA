@@ -1,2 +1,9 @@
 /.idea/
 /collection/
+*log.txt
+/flight/flight/spiders/data/
+/flight/flight/spiders/info/
+/flight/flight/spiders/response/
+/flight/flight/spiders/modules/airlines-ori.html
+/flight/flight/spiders/modules/airports-ori.html
+/flight/.scrapy/

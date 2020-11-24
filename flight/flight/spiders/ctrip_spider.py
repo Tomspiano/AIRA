@@ -32,7 +32,7 @@ class CtripSpider(scrapy.Spider, ABC):
 
     def __init__(self):
         super(CtripSpider, self).__init__()
-        self.max_retry_times = 3
+        self.max_retry_times = 2
         self.priority_adjust = -2
 
         self.flights = {}
@@ -86,31 +86,12 @@ class CtripSpider(scrapy.Spider, ABC):
                             'url'      : headers['referer']})
 
     def parse(self, response, **kwargs):
-        with open('response/ctrip.json', 'a', encoding='utf-8') as f:
-            f.write(f'{response.text}\n')
+        # with open('response/ctrip.json', 'a', encoding='utf-8') as f:
+        #     f.write(f'{response.text}\n')
 
         try:
             routeList = json.loads(response.text)['data']['routeList']
-        except KeyError:
-            self.logger.critical('无法获取数据')
-            self.crawler.engine.close_spider(self, '无法获取数据，请分析原因')
-        except TypeError:
-            retries = response.meta.get('empty_retry', 0) + 1
-            stats = self.crawler.stats
-            if retries <= self.max_retry_times:
-                self.logger.debug('"routeList" is not iterable')
-                retryreq = response.request.copy()
-                retryreq.meta['empty_retry'] = retries
-                retryreq.dont_filter = True
-                retryreq.priority = response.request.priority + self.priority_adjust
-                stats.inc_value('retry/count')
-                yield retryreq
-            else:
-                stats.inc_value('retry/max_reached')
-                self.logger.error(
-                        f'Gave up retrying {response.request} (failed {retries}d times): \'NoneType\' object is not '
-                        f'iterable')
-        else:
+
             item = LowestPrice()
             lowest = -1
             for i, route in enumerate(routeList):
@@ -140,6 +121,28 @@ class CtripSpider(scrapy.Spider, ABC):
                     item['dairport'] = flight['departureAirportInfo']['airportName']
                     item['url'] = kwargs['url']
 
+        except KeyError:
+            self.logger.critical('无法获取数据')
+            self.crawler.engine.close_spider(self, '无法获取数据，请分析原因')
+
+        except TypeError:
+            retries = response.meta.get('empty_retry', 0) + 1
+            stats = self.crawler.stats
+            if retries <= self.max_retry_times:
+                self.logger.debug('"routeList" is not iterable')
+                retryreq = response.request.copy()
+                retryreq.meta['empty_retry'] = retries
+                retryreq.dont_filter = True
+                retryreq.priority = response.request.priority + self.priority_adjust
+                stats.inc_value('retry/count')
+                yield retryreq
+            else:
+                stats.inc_value('retry/max_reached')
+                self.logger.error(
+                        f'放弃重试{response.request} (failed {retries}d times): '
+                        f'\'NoneType\' object is not iterable')
+
+        else:
             headers = {
                 'content-Type': 'application/json',
                 'user-agent'  : ''

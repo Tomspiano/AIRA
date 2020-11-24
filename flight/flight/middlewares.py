@@ -107,9 +107,9 @@ class FlightDownloaderMiddleware:
 from fake_useragent import UserAgent
 
 
-class RandomUserAgentMiddleware(object):
+class RandomUserAgentMiddleware:
     def __init__(self, crawler):
-        super().__init__()
+        self.crawler = crawler
         self.ua = UserAgent()
 
     @classmethod
@@ -120,12 +120,13 @@ class RandomUserAgentMiddleware(object):
         request.headers['User-Agent'] = self.ua.random
         # spider.logger.info(f'Using UA {request.headers["User-Agent"]}')
 
+
 import requests
 
 
-class RandomProxyMiddleware(object):
+class RandomProxyMiddleware:
     def __init__(self, crawler):
-        super().__init__()
+        self.crawler = crawler
         self.api = 'http://127.0.0.1:5000/'
 
     @classmethod
