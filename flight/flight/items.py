@@ -25,7 +25,7 @@ class Airline(scrapy.Item):
 
 
 class LowestPrice(scrapy.Item):
-    # airlineName = scrapy.Field()
+    companyName = scrapy.Field()
     flightNumber = scrapy.Field()
 
     acity = scrapy.Field()

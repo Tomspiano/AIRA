@@ -97,7 +97,7 @@ class CtripSpider(scrapy.Spider, ABC):
             for i, route in enumerate(routeList):
                 if route['routeType'] != 'Flight':
                     if i == 0:
-                        self.logger.info('无{}-{}的直达航班'.format(kwargs['dcityname'], kwargs['acityname']))
+                        # self.logger.info('无{}-{}的直达航班'.format(kwargs['dcityname'], kwargs['acityname']))
                         return
                     break
 
@@ -108,7 +108,7 @@ class CtripSpider(scrapy.Spider, ABC):
                     item['rate'] = priceInfo['rate']
 
                     flight = route['legs'][0]['flight']
-                    # item['airlineName'] = flight['airlineName']
+                    item['companyName'] = flight['airlineName']
                     item['flightNumber'] = flight['flightNumber']
                     # item['flightId'] = flight['id']
                     item['acity'] = flight['arrivalAirportInfo']['airportTlc']
