@@ -11,7 +11,7 @@ from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 # from flight.items import ScheduleItem
 import json
-from modules import dictionary as dic
+from flight.spiders.modules import dictionary as dic
 
 
 class SchedulesSpider(scrapy.Spider):
@@ -21,7 +21,7 @@ class SchedulesSpider(scrapy.Spider):
     def start_requests(self):
         # cityName = '甘孜'
         # cityAbbr = 'gzg'
-        for cityName, cityAbbr in dic.city.items():
+        for cityName, cityAbbr in dic.cities.items():
             url = f'https://flights.ctrip.com/schedule/{cityAbbr}..html'
             yield scrapy.Request(url=url, callback=self.parse, cb_kwargs={'dcityName': cityName, 'dcityAbbr': cityAbbr})
 
@@ -40,12 +40,12 @@ class SchedulesSpider(scrapy.Spider):
         with open(f'../data/flights.json', 'a', encoding='utf-8') as f:
             f.write(f'"{dcityName}": ')
             f.write('{')
-            f.write(f'"dcity": "{dic.city[dcityName]}", "acityInfo": ')
+            f.write(f'"dcity": "{dic.cities[dcityName]}", "acityInfo": ')
             acityInfo = {}
             for acitysName in acitysNames:
                 # item['acityname'] = acitysName
                 # item['acity'] = dic.city[acitysName]
-                acityInfo[acitysName] = dic.city[acitysName]
+                acityInfo[acitysName] = dic.cities[acitysName]
             json.dump(acityInfo, f, ensure_ascii=False)
             f.write('},\n')
             self.logger.info(f'已保存从{dcityName}出发的直达航班')

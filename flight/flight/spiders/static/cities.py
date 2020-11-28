@@ -9,7 +9,7 @@ Created on 2020/11/18
 import scrapy
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
-from modules import dictionary as dic
+from flight.spiders.modules import dictionary as dic
 
 
 class CitiesSpider2(scrapy.Spider):
@@ -22,7 +22,7 @@ class CitiesSpider2(scrapy.Spider):
         with open('../data/cityNameAbbr2.txt', 'w', encoding='utf-8') as f:
             for flight in response.css('div.m a'):
                 cityName = flight.css('::text').re(r'(\w+)航班')[0]
-                if cityName not in dic.city:
+                if cityName not in dic.cities:
                     cityAbbr = flight.css('::attr(href)').re(r'/(\w+)..html$')[0]
                     f.write(''.join(["'", cityName, "':'", cityAbbr, "',"]))
                     i += 1

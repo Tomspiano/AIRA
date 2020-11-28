@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Scrapy settings for flight project
 #
 # For simplicity, this file contains only settings considered important or
@@ -85,7 +86,7 @@ AUTOTHROTTLE_DEBUG = False
 # Enable and configure HTTP caching (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html#httpcache-middleware-settings
 HTTPCACHE_ENABLED = True
-HTTPCACHE_EXPIRATION_SECS = 0
+HTTPCACHE_EXPIRATION_SECS = 14400  # 每4小时更新一次
 HTTPCACHE_DIR = 'httpcache'
 HTTPCACHE_IGNORE_HTTP_CODES = []
 HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
