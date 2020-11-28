@@ -7,12 +7,14 @@ Created on 2020/11/13
 @Description: 携程旅行直达航班
 """
 from abc import ABC
+import datetime
+import execjs
+import json
 import scrapy
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from flight.items import LowestPrice
-import execjs
-import json
+from flight.spiders.modules import dictionary as dic
 
 
 def js_from_file(file_name):
@@ -25,32 +27,51 @@ def js_from_file(file_name):
         print('无法读取js文件，当前路径为：{}'.format(os.getcwd()))
 
 
+def gen_dates(start_date, day_counts):
+    next_day = datetime.timedelta(days=1)
+    for i in range(day_counts):
+        yield start_date + next_day * i
+
+
+def one_week(start_date):
+    end_date = start_date + datetime.timedelta(days=7)
+    dates = []
+    for d in gen_dates(start_date, (end_date - start_date).days):
+        dates.append(d.strftime("%Y-%m-%d"))
+    return dates
+
+
 class CtripSpider(scrapy.Spider, ABC):
     name = 'ctrip'
-
     custom_settings = {'LOG_FILE': 'ctrip_log.txt'}
 
-    def __init__(self):
+    def __init__(self, settings, **kwargs):
         super(CtripSpider, self).__init__()
         self.max_retry_times = 2
         self.priority_adjust = -2
+        if settings['REQUEST_ENABLED']:  # 查询模式
+            dcity = kwargs['dcity'].strip()
+            date = kwargs['date'].strip()
+            self.flights = {dcity: dic.flights[dcity]}
+            self.dates = [date]
+            self.logger.info(f'{date}从{dcity}出发的直达航班查询中***********************')
+        else:  # 日常模式
+            self.flights = dic.flights
+            self.dates = one_week(datetime.datetime.now())
+            self.logger.info('更新中**************************************************')
 
-        self.flights = {}
-        self.dates = []
-        self.get_info('info/post_info.json')
-
-        self.context = execjs.compile(js_from_file('modules/token.js'))
+        # self.context = execjs.compile(js_from_file('modules/token.js'))
+        self.context = execjs.compile(js_from_file('flight/spiders/modules/token.js'))
         self.referer = 'https://flights.ctrip.com/itinerary/oneway/'
         self.api = 'https://flights.ctrip.com/itinerary/api/12808/products/oneway'
 
         self.remote = 'http://airaflyscanner.site:8000/normalResearch/'
 
-    def get_info(self, path):
-        with open(path, 'r', encoding='utf-8') as f:
-            info = json.load(f)
-
-        self.flights = info['flights']
-        self.dates = info['date']
+    @classmethod
+    def from_crawler(cls, crawler, *args, **kwargs):
+        spider = cls(crawler.settings, **kwargs)
+        spider._set_crawler(crawler)
+        return spider
 
     def start_requests(self):
         for date in self.dates:

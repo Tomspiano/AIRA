@@ -14,21 +14,24 @@ from scrapy.commands import ScrapyCommand
 class Command(crawl.Command):
     def add_options(self, parser):
         ScrapyCommand.add_options(self, parser)
-        parser.add_option('-i', '--info', metavar='FILE',
-                          help='json file. for crawling')
+        parser.add_option('-d', '--date', help='departure date, like 2020-12-01')
+        parser.add_option('-c', '--dcity', help='departure city, like 福州')
 
     def process_options(self, args, opts):
         ScrapyCommand.process_options(self, args, opts)
-        if opts.info:
-            self.settings.set('REQUIRED_INFO', opts.info, priority='cmdline')
+
+        if opts.date and opts.dcity:
+            self.settings.set('REQUEST_ENABLED', True, priority='cmdline')
+            # self.settings.set('DATE', opts.date, priority='cmdline')
+            # self.settings.set('ACITY', opts.dcity, priority='cmdline')
+
         else:
-            raise UsageError('You MUST pass the information to start crawling')
+            self.settings.set('REQUEST_ENABLED', False, priority='cmdline')
 
     def run(self, args, opts):
         """ start crawling. """
-        self.crawler_process.crawl('ctrip')
+        self.crawler_process.crawl('ctrip', **opts.__dict__)
         self.crawler_process.start()
 
 # 在AIRA/flight输入如下命令
-# scrapy run -i json/file/path
-# TODO(Tomspiano): 命令待测试
+# scrapy run -d 2020-12-12 -c 福州
