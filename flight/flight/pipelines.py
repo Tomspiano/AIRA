@@ -13,16 +13,7 @@ class FlightPipeline:
         return item
 
 
-import json
-
-
 class CtripPipeline:
-    def __init__(self, path):
-        self.info = json.loads(path)
-
-    @classmethod
-    def from_crawler(cls, crawler):
-        return cls(path=crawler.settings.get('REQUIRED_INFO'))
-
-    def open_spider(self, spider):
-        spider.get_info(self.info)
+    def process_item(self, item, spider):
+        item.save()
+        return item

@@ -142,6 +142,8 @@ class CtripSpider(scrapy.Spider, ABC):
                     item['dairport'] = flight['departureAirportInfo']['airportName']
                     item['url'] = kwargs['url']
 
+                    yield item
+
         except KeyError:
             self.logger.critical('无法获取数据')
             self.crawler.engine.close_spider(self, '无法获取数据，请分析原因')
@@ -163,13 +165,13 @@ class CtripSpider(scrapy.Spider, ABC):
                         f'放弃重试{response.request} (failed {retries}d times): '
                         f'\'NoneType\' object is not iterable')
 
-        else:
-            headers = {
-                'content-Type': 'application/json',
-                'user-agent'  : ''
-            }
-            yield scrapy.Request(url=self.remote, method='POST', headers=headers, body=json.dumps(dict(item)),
-                                 callback=self.check_info, cb_kwargs=kwargs)
+        # else:
+        #     headers = {
+        #         'content-Type': 'application/json',
+        #         'user-agent'  : ''
+        #     }
+        #     yield scrapy.Request(url=self.remote, method='POST', headers=headers, body=json.dumps(dict(item)),
+        #                          callback=self.check_info, cb_kwargs=kwargs)
 
     def check_info(self, response, **kwargs):
         if response.text not in ['OK', '更新成功']:

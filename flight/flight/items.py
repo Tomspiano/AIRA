@@ -23,21 +23,27 @@ class Airline(scrapy.Item):
     name = scrapy.Field()
     logo = scrapy.Field()
 
+from scrapy_djangoitem import DjangoItem
+from models import Tickets # TODO(Tomspiano): need to be checked
 
-class LowestPrice(scrapy.Item):
-    companyName = scrapy.Field()
-    flightNumber = scrapy.Field()
+# class LowestPrice(scrapy.Item):
+    # companyName = scrapy.Field()
+    # flightNumber = scrapy.Field()
+    #
+    # acity = scrapy.Field()
+    # acityName = scrapy.Field()
+    # arrivalDate = scrapy.Field()
+    # aairport = scrapy.Field()
+    # dcity = scrapy.Field()
+    # dcityName = scrapy.Field()
+    # departureDate = scrapy.Field()
+    # dairport = scrapy.Field()
+    #
+    # price = scrapy.Field()
+    # rate = scrapy.Field()
+    #
+    # url = scrapy.Field()
 
-    acity = scrapy.Field()
-    acityName = scrapy.Field()
-    arrivalDate = scrapy.Field()
-    aairport = scrapy.Field()
-    dcity = scrapy.Field()
-    dcityName = scrapy.Field()
-    departureDate = scrapy.Field()
-    dairport = scrapy.Field()
 
-    price = scrapy.Field()
-    rate = scrapy.Field()
-
-    url = scrapy.Field()
+class LowestPrice(DjangoItem):
+    django_model = Tickets

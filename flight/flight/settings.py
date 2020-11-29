@@ -7,6 +7,17 @@
 #     https://docs.scrapy.org/en/latest/topics/settings.html
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+import sys
+import os
+import django
+
+# TODO(Tomspiano): need to be checked
+BASE_DIR = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
+PRO_ROOT = os.path.dirname(BASE_DIR)
+sys.path.append(os.path.join(PRO_ROOT, 'flight'))
+sys.path.append(os.path.join(BASE_DIR, 'flight'))
+os.environ['DJANGO_SETTINGS_MODULE'] = 'tickets.settings'
+django.setup()
 
 BOT_NAME = 'flight'
 
@@ -65,10 +76,10 @@ DOWNLOADER_MIDDLEWARES = {
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-# ITEM_PIPELINES = {
-#     # 'flight.pipelines.FlightPipeline': 300,
-#     'flight.pipelines.CtripPipeline': 300,
-# }
+ITEM_PIPELINES = {
+    # 'flight.pipelines.FlightPipeline': 300,
+    'flight.pipelines.CtripPipeline': 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
