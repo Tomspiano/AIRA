@@ -45,11 +45,11 @@ class CtripSpider(scrapy.Spider, ABC):
     name = 'ctrip'
     custom_settings = {'LOG_FILE': 'ctrip_log.txt'}
 
-    def __init__(self, settings, **kwargs):
+    def __init__(self, **kwargs):
         super(CtripSpider, self).__init__()
         self.max_retry_times = 2
         self.priority_adjust = -2
-        if settings['REQUEST_ENABLED']:  # 查询模式
+        if kwargs['REQUEST_ENABLED']:  # 查询模式
             dcity = kwargs['dcity'].strip()
             date = kwargs['date'].strip()
             self.flights = {dcity: dic.flights[dcity]}
@@ -69,7 +69,7 @@ class CtripSpider(scrapy.Spider, ABC):
 
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
-        spider = cls(crawler.settings, **kwargs)
+        spider = cls(**kwargs)
         spider._set_crawler(crawler)
         return spider
 
@@ -178,5 +178,7 @@ class CtripSpider(scrapy.Spider, ABC):
 
 if __name__ == '__main__':
     process = CrawlerProcess(get_project_settings())
-    process.crawl(CtripSpider)
+    process.crawl(CtripSpider, {'REQUEST_ENABLED': True, 'dcity': '福州', 'date': '2020-12-28'})  # 查询模式
+    # process.crawl(CtripSpider, {'REQUEST_ENABLED': False})  # 日常模式
+
     process.start()

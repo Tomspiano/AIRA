@@ -96,7 +96,7 @@ LOG_FILE = 'log.txt'
 LOG_LEVEL = 'INFO'
 
 # Add custom project commands
-COMMANDS_MODULE = 'flight.commands'
+# COMMANDS_MODULE = 'flight.commands'
 
 # Configure retry middleware
 # RETRY_TIMES = 3
