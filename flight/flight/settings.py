@@ -65,10 +65,10 @@ DOWNLOADER_MIDDLEWARES = {
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-# ITEM_PIPELINES = {
-#     # 'flight.pipelines.FlightPipeline': 300,
-#     'flight.pipelines.CtripPipeline': 300,
-# }
+ITEM_PIPELINES = {
+    # 'flight.pipelines.FlightPipeline': 300,
+    'flight.pipelines.MysqlPipeline': 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
@@ -100,3 +100,10 @@ LOG_LEVEL = 'INFO'
 
 # Configure retry middleware
 # RETRY_TIMES = 3
+
+# MySQL settings
+MYSQL_HOST = '127.0.0.1'
+MYSQL_PORT = 3306
+MYSQL_DBNAME = 'tickettest'
+MYSQL_USER = 'root'
+MYSQL_PASSWD = '123456'
