@@ -6,35 +6,18 @@ Created on 2020/12/13
 @Product: PyCharm
 @Description: 成都航空特价机票
 """
-from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from fake_useragent import UserAgent
 from pkg.items import Discount
+from pkg import tools as tl
 import re
-import json
 
 WAIT = 60
 path = 'data'
 
-
-def save(data):
-    with open(f'{path}/cdal.json', 'w', encoding='utf-8') as f:
-        json.dump(data.__dict__, f, ensure_ascii=False)
-
-def get_ua():
-    ua = UserAgent()
-    return ua.random
-
-def setup_driver():
-    options = webdriver.ChromeOptions()
-    options.add_argument(get_ua())
-    options.add_argument('--headless')
-    return webdriver.Chrome(options=options)
-
 if __name__ == '__main__':
-    driver = setup_driver()
+    driver = tl.setup_driver()
     driver.get('https://www.cdal.com.cn/')
     # 点击“查看更多”
     more = WebDriverWait(driver, WAIT).until(
@@ -62,4 +45,4 @@ if __name__ == '__main__':
             item.departureDate = ticket.find_element_by_xpath('./a/div[1]/p[2]').text
             item.price = eval(ticket.find_element_by_xpath('./a/div[2]/p[1]').text[1:])
             item.rate = eval(re.search(r'(?<=最低价).+(?=折)', ticket.find_element_by_xpath('./a/div[2]/p[2]').text)[0])
-            save(item) # 在这里断点！实际上只能保存一条数据！
+            tl.save(item, f'{path}/cdal.json')  # 在这里断点！实际上只能保存一条数据！
